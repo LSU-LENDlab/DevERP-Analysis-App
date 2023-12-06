@@ -22,20 +22,20 @@ for i = 1:numparams
         subject = deverp.subjectlist.subjects{s};
 
         % load in datasets
-        EEG = pop_loadset([workdir filesep [subject '_chansrm_.set']]);
+        EEG = pop_loadset([deverp.dirs.workdir filesep [subject '_chansrm_.set']]);
 
         % filter the data
         EEG  = pop_basicfilter( EEG,  1:EEG.nbchan , 'Boundary', 'boundary', 'Cutoff', [ highpass(i) 30], ...
                 'Design', 'butter', 'Filter', 'bandpass', 'Order',4 );
 
         % save dataset
-        EEG = pop_saveset( EEG, [workdir filesep [subject '_highpass_' highpass_str{i} '.set']]);
+        EEG = pop_saveset( EEG, [deverp.dirs.workdir filesep [subject '_highpass_' highpass_str{i} '.set']]);
     end
 end
 
 %% Epoch filter data
 
-EEG = epochWrapper(EEG,ALLEEG, CURRENTSET, 'filter', subject_list, workdir, txtdir, erpdir);
+EEG = epochWrapper(deverp, EEG,ALLEEG, CURRENTSET, 'filter', subject_list, workdir, txtdir, erpdir);
 
 %% Make ERP list for filter data
 
@@ -43,9 +43,9 @@ highpass_str = {'1', 'pt1', 'pt01', 'pt25', 'pt5', 'pt75'};
 erpnames = {'1_erplist.txt', 'pt1_erplist.txt', 'pt01_erplist.txt', 'pt25_erplist.txt', 'pt5_erplist.txt', 'pt75_erplist.txt'};
 
 for j = 1:numparams
-    fileID = fopen([txtdir filesep erpnames{j}], 'w');
+    fileID = fopen([deverp.dirs.txtdir filesep erpnames{j}], 'w');
     for i = 1:numsubjects
-        subject = subject_list{i};
+        subject = deverp.subjectlist.subjects{i};
         data = fullfile(erpdir, [subject '_highpass_' highpass_str{j} '.erp']);
         fprintf(fileID, '%s\n', data);
     end
